@@ -343,7 +343,7 @@ document.getElementById("save-mqtt").addEventListener("click", function(e) {
         user: document.getElementById("mqtt_user").value,
         pass: document.getElementById("mqtt_pass").value,
         solar: document.getElementById("mqtt_solar").value,
-        use: document.getElementById("mqtt_use").value
+        use: document.getElementById("mqtt_use").value,
         solartype: document.getElementById("mqtt_solartype").value
     };
     if (mqtt.server==="") {
