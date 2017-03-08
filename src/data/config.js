@@ -3,7 +3,7 @@ var selected_network_ssid = "";
 var lastmode = "";
 var ipaddress = "";
 
-// get statup status and populate input fields
+// get statup 'status' settings and populate input fields
 var r1 = new XMLHttpRequest();
 r1.open("GET", "status", false);
 r1.onreadystatechange = function () {
@@ -53,6 +53,14 @@ r1.onreadystatechange = function () {
   document.getElementById("version").innerHTML = status.version;
   document.getElementById("ohmkey").value = status.ohmkey;
 
+  // Set Solar PV divert mode button to current mode status
+  if (mqtt.solar==="") {
+    set_mode_button(0); // disable mode button if solar PV feeds are not configured
+  }
+  else{
+    set_mode_button(status.mode);
+  }
+
 
   if (status.mode=="AP") {
       document.getElementById("mode").innerHTML = "Access Point (AP)";
@@ -79,12 +87,12 @@ r1.onreadystatechange = function () {
       document.getElementById("client-view").style.display = '';
 
       ipaddress = status.ipaddress;
-
-
   }
 };
+
 r1.send();
 
+// GET OpenEVSE Config Settings
 var r2 = new XMLHttpRequest();
 r2.open("GET", "config", true);
 r2.timeout = 2000;
@@ -145,10 +153,11 @@ r2.onreadystatechange = function () {
 };
 r2.send();
 
+// Get OpenEVSE rapiupdate status
 var r3 = new XMLHttpRequest();
-    r3.open("GET", "rapiupdate", true);
-	r3.timeout = 8000;
-    r3.onreadystatechange = function () {
+r3.open("GET", "rapiupdate", true);
+r3.timeout = 8000;
+r3.onreadystatechange = function () {
     if (r3.readyState != 4 || r3.status != 200) return;
       var update = JSON.parse(r3.responseText);
 	  document.getElementById("comm-psent").innerHTML = update.comm_sent;
@@ -165,9 +174,8 @@ var r3 = new XMLHttpRequest();
 	  document.getElementById("temp1").innerHTML = update.temp1;
 	  document.getElementById("temp2").innerHTML = update.temp2;
 	  document.getElementById("temp3").innerHTML = update.temp3;
-
-	};
-	r3.send();
+};
+r3.send();
 
 update();
 setInterval(update,10000);
@@ -179,9 +187,9 @@ setInterval(update,10000);
 function update() {
 
 	var r3 = new XMLHttpRequest();
-    r3.open("GET", "rapiupdate", true);
+  r3.open("GET", "rapiupdate", true);
 	r3.timeout = 8000;
-    r3.onreadystatechange = function () {
+  r3.onreadystatechange = function () {
     if (r3.readyState != 4 || r3.status != 200) return;
       var update = JSON.parse(r3.responseText);
 	  document.getElementById("comm-psent").innerHTML = update.comm_sent;
@@ -197,41 +205,41 @@ function update() {
 	  document.getElementById("temp1").innerHTML = update.temp1;
 	  document.getElementById("temp2").innerHTML = update.temp2;
 	  document.getElementById("temp3").innerHTML = update.temp3;
-    };
-    r3.send();
+  };
+  r3.send();
 	var r2 = new XMLHttpRequest();
-    r2.open("GET", "status", false);
-    r2.onreadystatechange = function () {
+  r2.open("GET", "status", false);
+  r2.onreadystatechange = function () {
     if (r2.readyState != 4 || r2.status != 200) return;
-      var status = JSON.parse(r2.responseText);
+    var status = JSON.parse(r2.responseText);
 
-      document.getElementById("free_heap").innerHTML = status.free_heap;
+    document.getElementById("free_heap").innerHTML = status.free_heap;
 
-      if (status.emoncms_connected == "1"){
-       document.getElementById("emoncms_connected").innerHTML = "Yes";
-       if  ((status.packets_success!="undefined") & (status.packets_sent!="undefined")){
-         document.getElementById("psuccess").innerHTML = "Successful posts: " + status.packets_success + " / " + status.packets_sent;
-       }
-      } else {
-        document.getElementById("emoncms_connected").innerHTML = "No";
+    if (status.emoncms_connected == "1"){
+     document.getElementById("emoncms_connected").innerHTML = "Yes";
+     if  ((status.packets_success!="undefined") & (status.packets_sent!="undefined")){
+       document.getElementById("psuccess").innerHTML = "Successful posts: " + status.packets_success + " / " + status.packets_sent;
+     }
+    } else {
+      document.getElementById("emoncms_connected").innerHTML = "No";
+    }
+
+    if (status.mqtt_connected == "1"){
+     document.getElementById("mqtt_connected").innerHTML = "Yes";
+    } else {
+     document.getElementById("mqtt_connected").innerHTML = "No";
+    }
+
+    if ((status.mode=="STA") || (status.mode=="STA+AP")){
+      // Update connected network RSSI
+      var out="";
+      out += "<tr><td>"+status.ssid+"</td><td>"+status.srssi+"</td></tr>";
+      document.getElementById("sta-ssid").innerHTML = out;
       }
-
-      if (status.mqtt_connected == "1"){
-       document.getElementById("mqtt_connected").innerHTML = "Yes";
-      } else {
-       document.getElementById("mqtt_connected").innerHTML = "No";
-      }
-
-      if ((status.mode=="STA") || (status.mode=="STA+AP")){
-        // Update connected network RSSI
-        var out="";
-        out += "<tr><td>"+status.ssid+"</td><td>"+status.srssi+"</td></tr>";
-        document.getElementById("sta-ssid").innerHTML = out;
-      }
-    };
+  };
     r2.send();
-
 }
+
 function updateStatus() {
   // Update status on Wifi connection
   var r1 = new XMLHttpRequest();
@@ -324,32 +332,34 @@ document.getElementById("save-emoncms").addEventListener("click", function(e) {
 // -----------------------------------------------------------------------
 // Event: MQTT save
 // -----------------------------------------------------------------------
+
 document.getElementById("save-mqtt").addEventListener("click", function(e) {
     var mqtt = {
-      server: document.getElementById("mqtt_server").value,
-      topic: document.getElementById("mqtt_topic").value,
-      user: document.getElementById("mqtt_user").value,
-      pass: document.getElementById("mqtt_pass").value,
-      solar: document.getElementById("mqtt_solar").value,
-      use: document.getElementById("mqtt_use").value
+        server: document.getElementById("mqtt_server").value,
+        topic: document.getElementById("mqtt_topic").value,
+        user: document.getElementById("mqtt_user").value,
+        pass: document.getElementById("mqtt_pass").value,
+        solar: document.getElementById("mqtt_solar").value,
+        use: document.getElementById("mqtt_use").value
     };
     if (mqtt.server==="") {
-      alert("Please enter MQTT server");
+        alert("Please enter MQTT server");
     } else {
-      document.getElementById("save-mqtt").innerHTML = "Saving...";
-      var r = new XMLHttpRequest();
-      r.open("POST", "savemqtt", true);
-      r.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-      r.send("&server="+mqtt.server+"&topic="+mqtt.topic+"&user="+mqtt.user+"&pass="+mqtt.pass+"&solar="+mqtt.solar+"&use="+mqtt.use);
-      r.onreadystatechange = function () {
-        console.log(mqtt);
-        if (r.readyState != 4 || r.status != 200) return;
-        var str = r.responseText;
-  	    console.log(str);
-  	    if (str!==0) document.getElementById("save-mqtt").innerHTML = "Saved";
-      };
+        document.getElementById("save-mqtt").innerHTML = "Saving...";
+        var r = new XMLHttpRequest();
+        r.open("POST", "savemqtt", true);
+        r.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        r.send("&server="+mqtt.server+"&topic="+mqtt.topic+"&user="+mqtt.user+"&pass="+mqtt.pass+"&solar="+mqtt.solar+"&use="+mqtt.use);
+        r.onreadystatechange = function () {
+            console.log(mqtt);
+            if (r.readyState != 4 || r.status != 200) return;
+            var str = r.responseText;
+  	        console.log(str);
+  	        if (str!==0) document.getElementById("save-mqtt").innerHTML = "Saved";
+        };
     }
 });
+
 
 // -----------------------------------------------------------------------
 // Event: Change mode (solar PV divert)
@@ -357,41 +367,64 @@ document.getElementById("save-mqtt").addEventListener("click", function(e) {
 var mode = 0;
 
 document.getElementById("mode1").addEventListener("click", function(e) {
-    // Eco
-    mode = 1;
+    mode = 1; // Eco
+    set_mode_button(mode);
     changemode(mode);
+});
+
+document.getElementById("mode2").addEventListener("click", function(e) {
+    mode = 2;     // Eco+
+    set_mode_button(mode);
+    changemode(mode);
+});
+
+document.getElementById("mode3").addEventListener("click", function(e) {
+    mode = 3;     // normal charge
+    set_mode_button(mode);
+    changemode(mode);
+
+});
+
+function set_mode_button(mode){
+  // Set formatting solar PV divert mode button
+  if (mode = 0){
+    //DISABLE BUTTONS
+    document.getElementById("mode1").disabled = true;
+    document.getElementById("mode2").disabled = true;
+    document.getElementById("mode3").disabled = true;
+    document.getElementById("solar-wrapper").style.opacity = "0.5";
+  } else {
+    document.getElementById("mode1").disabled = false;
+    document.getElementById("mode2").disabled = false;
+    document.getElementById("mode3").disabled = false;
+    document.getElementById("solar-wrapper").style.opacity = "1.0";
+  }
+
+  if (mode == 1){
     document.getElementById("mode1").style.color = '#000000';
     document.getElementById("mode2").style.color = 'white';
     document.getElementById("mode3").style.color = 'white';
     document.getElementById("mode1").style.backgroundColor = '#f1f1f1';
     document.getElementById("mode2").style.backgroundColor = '#008080';
     document.getElementById("mode3").style.backgroundColor = '#008080';
-});
-
-document.getElementById("mode2").addEventListener("click", function(e) {
-    // Eco+
-    mode = 2;
-    changemode(mode);
+  }
+  if (mode == 2){
     document.getElementById("mode1").style.color = 'white';
     document.getElementById("mode2").style.color = '#000000';
     document.getElementById("mode3").style.color = 'white';
-
     document.getElementById("mode2").style.backgroundColor = '#f1f1f1';
     document.getElementById("mode1").style.backgroundColor = '#008080';
     document.getElementById("mode3").style.backgroundColor = '#008080';
-});
-
-document.getElementById("mode3").addEventListener("click", function(e) {
-    // normal charge
-    mode = 3;
-    changemode(mode);
+  }
+  if (mode == 3){
     document.getElementById("mode1").style.color = 'white';
     document.getElementById("mode2").style.color = 'white';
     document.getElementById("mode3").style.color = '#000000';
     document.getElementById("mode3").style.backgroundColor = '#f1f1f1';
     document.getElementById("mode1").style.backgroundColor = '#008080';
     document.getElementById("mode2").style.backgroundColor = '#008080';
-});
+  }
+}
 
 function changemode(mode){
    var r = new XMLHttpRequest();
