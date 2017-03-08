@@ -2,6 +2,7 @@ var statusupdate = false;
 var selected_network_ssid = "";
 var lastmode = "";
 var ipaddress = "";
+var divertmode = 0;
 
 // get statup 'status' settings and populate input fields
 var r1 = new XMLHttpRequest();
@@ -54,11 +55,13 @@ r1.onreadystatechange = function () {
   document.getElementById("ohmkey").value = status.ohmkey;
 
   // Set Solar PV divert mode button to current mode status
-  if (mqtt.solar==="") {
-    set_mode_button(0); // disable mode button if solar PV feeds are not configured
+  if (mqtt.solar===0) {
+    divertmode=0;
+    set_mode_button(divertmode); // disable mode button if solar PV feeds are not configured
   }
   else{
-    set_mode_button(status.mode);
+    divertmode = status.divertmode;
+    set_mode_button(divertmode);
   }
 
 
@@ -341,6 +344,7 @@ document.getElementById("save-mqtt").addEventListener("click", function(e) {
         pass: document.getElementById("mqtt_pass").value,
         solar: document.getElementById("mqtt_solar").value,
         use: document.getElementById("mqtt_use").value
+        solartype: document.getElementById("mqtt_solartype").value
     };
     if (mqtt.server==="") {
         alert("Please enter MQTT server");
@@ -349,7 +353,7 @@ document.getElementById("save-mqtt").addEventListener("click", function(e) {
         var r = new XMLHttpRequest();
         r.open("POST", "savemqtt", true);
         r.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-        r.send("&server="+mqtt.server+"&topic="+mqtt.topic+"&user="+mqtt.user+"&pass="+mqtt.pass+"&solar="+mqtt.solar+"&use="+mqtt.use);
+        r.send("&server="+mqtt.server+"&topic="+mqtt.topic+"&user="+mqtt.user+"&pass="+mqtt.pass+"&solar="+mqtt.solar+"&use="+mqtt.use+"&solartype="+mqtt.solartype);
         r.onreadystatechange = function () {
             console.log(mqtt);
             if (r.readyState != 4 || r.status != 200) return;
@@ -364,8 +368,6 @@ document.getElementById("save-mqtt").addEventListener("click", function(e) {
 // -----------------------------------------------------------------------
 // Event: Change mode (solar PV divert)
 // -----------------------------------------------------------------------
-var mode = 0;
-
 document.getElementById("mode1").addEventListener("click", function(e) {
     mode = 1; // Eco
     set_mode_button(mode);
@@ -392,11 +394,13 @@ function set_mode_button(mode){
     document.getElementById("mode1").disabled = true;
     document.getElementById("mode2").disabled = true;
     document.getElementById("mode3").disabled = true;
+    document.getElementById("solarpvdivertmsg").innerHTML = "Error: MQTT config not configured with Solar PV genertion topic.";
     document.getElementById("solar-wrapper").style.opacity = "0.5";
   } else {
     document.getElementById("mode1").disabled = false;
     document.getElementById("mode2").disabled = false;
     document.getElementById("mode3").disabled = false;
+    document.getElementById("solarpvdivertmsg").innerHTML = "";
     document.getElementById("solar-wrapper").style.opacity = "1.0";
   }
 
@@ -428,7 +432,7 @@ function set_mode_button(mode){
 
 function changemode(mode){
    var r = new XMLHttpRequest();
-    r.open("POST", "mode", true);
+    r.open("POST", "divertmode", true);
     r.setRequestHeader("Content-type","application/x-www-form-urlencoded");
     r.send("&mode="+mode);
     r.onreadystatechange = function () {

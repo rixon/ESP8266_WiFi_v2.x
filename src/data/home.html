@@ -25,15 +25,20 @@
 <div id="container">
 
     <input id="tab-1" type="radio" name="tab-group" checked="checked" />
-    <label for="tab-1">System</label>
+    <label for="tab-1">WiFi</label>
     <input id="tab-2" type="radio" name="tab-group" />
-    <label for="tab-2">Services</label>
+    <label for="tab-2">Config</label>
     <input id="tab-3" type="radio" name="tab-group" />
     <label for="tab-3">Status</label>
     <input id="tab-4" type="radio" name="tab-group" />
     <label for="tab-4">RAPI</label>
+    <input id="tab-5" type="radio" name="tab-group" />
+    <label for="tab-5">Mode</label>
+
     <div id="content">
+
       <div id="content-1">
+
          <div class="box380">
 				<h2>WiFi Setup</h2>
                 <p><b>Mode:</b> <span id="mode"></span></p>
@@ -65,11 +70,11 @@
                 </div>
             </div>
          	<div class="box380">
-			<h2>Authentication</h2>
+			<h2>User Authentication</h2>
 				<p><b>Username:</b><br>
 				<input id="www_user" type="text" value="admin">
 				<p><b>Password:</b><br>
-				<input id="www_pass" type="text" value="openevse"><br>
+				<input id="www_pass" type="text" value="openevse"><br><br>
         <span id=small-text>Web interface HTTP authentication.</span><br><br>
 				<button id="save-admin">Save</button>
 			</div>
@@ -95,7 +100,7 @@
 				<input id="emoncms_server" type="text" value="emoncms.org">
 				<p></p><span id=small-text>e.g:
 				<a href="http://data.openevse.com/emoncms">data.openevse.com/emoncms</a>,
-				<a href="http://emoncms.org">emoncms.org</a>,
+				<a href="https://emoncms.org">emoncms.org</a>,
 				<a href="http://emonpi/emoncms">emonpi/emoncms</a>
 				</span><br>
 
@@ -115,17 +120,6 @@
 				<b>&nbsp; Connected:&nbsp;<span id="emoncms_connected"></span></b><br><br>
 				<span id="psuccess"></span>
   </div>
-
-      <div class="box380">
-      		<h2>Solar PV Divert</h2>
-          <p>Dynamically adjust charge rate based on solar PV generation.</p>
-      	  <span id=small-text><b>Ensure MQTT server config is configured with solar PV gen topic.</b></span><br>
-      		<h2>Mode</h2>
-      		<button id="mode1">1:Eco</button>
-      		<button id="mode2">2:Eco+</button>
-      		<button id="mode3">3:Normal (default)</button>
-      		<span id=small-text>Mode can be controlled via MQTT topic: {base-topic}/mode e.g: '1':Eco, '2':Eco+, '3':Normal</span><br>
-    		</div>
 
     		<div class="box380">
     		<h2>MQTT</h2>
@@ -253,7 +247,8 @@
                   </table>
                </div>
   		 </div>
-          <div id="content-4">
+
+    <div id="content-4">
   			<div class="box380">
                <iframe style="width:380px; height:620px;" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="/rapi">
   			</iframe>
@@ -312,8 +307,36 @@
                   <tr><td>$FS</td><td>Put EVSE to sleep</td></tr>
                </table>
 			</div>
-        </div>
-	</div>
+  </div>
+  <!-- end container 4 -->
+
+
+
+
+    <div id="content-5">
+        <div class="box380" id=solar-wrapper>
+        		<h2>Solar PV Divert</h2>
+            <p>Dynamically adjust charge rate based on solar PV generation.</p>
+            <span id=small-text><i>Mode can also be controlled via MQTT: {base-topic}/mode</i></span><br>
+        		<h2>Mode</h2>
+        		<button id="mode1">1:Eco</button>
+        		<button id="mode2">2:Eco+</button>
+        		<button id="mode3">3:Normal (default)</button><br><br>
+            <b><span id="solarpvdivertmsg"></span></b><br>
+      		</div>
+    </div>
+    <!-- end container 5 -->
+
+</div>
+<!-- end content -->
+
+
+
+
+
+
+
+
 
 
 

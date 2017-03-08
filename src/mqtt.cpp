@@ -28,7 +28,7 @@ void mqttmsg_callback(char* topic, byte* payload, unsigned int length)
   String topic_string = String(topic);
   // Locate '$' character in the MQTT message to identify RAPI command
   int rapi_character_index = topic_string.indexOf('$');
-  
+
   // print received MQTT to debug
   DEBUG.println("MQTT received:");
   DEBUG.print(topic);
@@ -37,7 +37,7 @@ void mqttmsg_callback(char* topic, byte* payload, unsigned int length)
     DEBUG.print((char)payload[i]);
   }
   DEBUG.println();
-  
+
   // Detect if MQTT message is a RAPI command e.g to set 13A <base-topic>/rapi/$SC 13
   if (rapi_character_index > 1){
     // Print RAPI command from mqtt-sub topic e.g $SC
@@ -54,7 +54,7 @@ void mqttmsg_callback(char* topic, byte* payload, unsigned int length)
       }
     }
     Serial.println(); // End of RAPI command serial print (new line)
-    
+
     // Check RAPI command has been succesful by listing for $OK responce and publish to MQTT under "rapi/out" topic
     delay(60);        // commDelay = 60 (input.cpp)
     while(Serial.available()) {
@@ -67,7 +67,7 @@ void mqttmsg_callback(char* topic, byte* payload, unsigned int length)
     }
   }
 
-  
+
 } //end call back
 
 // -------------------------------------------------------------------
@@ -86,6 +86,14 @@ boolean mqtt_connect()
     String mqtt_sub_topic = mqtt_topic + "/rapi/in/#";      // MQTT Topic to subscribe to receive RAPI commands via MQTT
     //e.g to set current to 13A: <base-topic>/rapi/in/$SC 13
     mqttclient.subscribe(mqtt_sub_topic.c_str());
+    // subscribe to solar PV MQTT feeds, required for solar PV divert
+    if (mqtt_solar!=""){
+      mqttclient.subscribe(mqtt_solar.c_str());
+    }
+    if (mqtt_use!=""){
+      mqttclient.subscribe(mqtt_use.c_str());
+    }
+
   } else {
     DEBUG.print("MQTT failed: ");
     DEBUG.println(mqttclient.state());
@@ -103,7 +111,7 @@ void mqtt_publish(String data)
 {
   String mqtt_data = "";
   String topic = mqtt_topic + "/";
-  
+
   int i=0;
   while (int(data[i])!=0)
   {
@@ -133,7 +141,7 @@ void mqtt_publish(String data)
     i++;
     if (int(data[i])==0) break;
   }
-  
+
   String ram_topic = topic + "freeram";
   String free_ram = String(ESP.getFreeHeap());
   mqttclient.publish(ram_topic.c_str(), free_ram.c_str());

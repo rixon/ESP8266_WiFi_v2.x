@@ -212,9 +212,11 @@ void handleSaveMqtt() {
 // Change mode (solar PV divert mode) e.g 1:eco, 2:eco+, 3:normal (default)
 // url: /mode
 // -------------------------------------------------------------------
-void handleMode(){
-  change_mode(server.arg("mode").toInt());
-  server.send(200, "text/html", "Mode changed");;
+void handleDivertMode(){
+  change_divertmode(server.arg("mode").toInt());
+  server.send(200, "text/html", "Divert Mode changed");;
+  DEBUG.print("mode: ");
+  DEBUG.println(divertmode);
 }
 
 // -------------------------------------------------------------------
@@ -288,7 +290,9 @@ void handleStatus() {
   //s += "\"www_password\":\""+www_password+"\","; security risk: DONT RETURN PASSWORDS
 
   s += "\"free_heap\":\""+String(ESP.getFreeHeap())+"\",";
-  s += "\"version\":\""+currentfirmware+"\"";
+  s += "\"version\":\""+currentfirmware+"\",";
+  s += "\"divertmode\":\""+String(divertmode)+"\"";
+
 
   s += "}";
   server.send(200, "text/html", s);
@@ -379,57 +383,6 @@ void handleRestart() {
   ESP.restart();
 }
 
-
-
-/*
-// -------------------------------------------------------------------
-// Check for updates and display current version
-// url: /firmware
-// -------------------------------------------------------------------
-String handleUpdateCheck() {
-  DEBUG.println("Running: " + currentfirmware);
-  // Get latest firmware version number
-  String latestfirmware = ota_get_latest_version();
-  DEBUG.println("Latest: " + latestfirmware);
-  // Update web interface with firmware version(s)
-  String s = "{";
-  s += "\"current\":\""+currentfirmware+"\",";
-  s += "\"latest\":\""+latestfirmware+"\"";
-  s += "}";
-  server.send(200, "text/html", s);
-  return (latestfirmware);
-}
-
-
-// -------------------------------------------------------------------
-// Update firmware
-// url: /update
-// -------------------------------------------------------------------
-void handleUpdate() {
-  DEBUG.println("UPDATING...");
-  delay(500);
-
-  t_httpUpdate_return ret = ota_http_update();
-
-  int retCode = 400;
-  String str="error";
-  switch(ret) {
-    case HTTP_UPDATE_FAILED:
-      str = DEBUG.printf("Update failed error (%d): %s", ESPhttpUpdate.getLastError(), ESPhttpUpdate.getLastErrorString().c_str());
-      break;
-    case HTTP_UPDATE_NO_UPDATES:
-      str = "No update, running latest firmware";
-      break;
-    case HTTP_UPDATE_OK:
-      retCode = 200;
-      str = "Update done!";
-      break;
-  }
-  server.send(retCode, "text/plain", str);
-  DEBUG.println(str);
-}
-*/
-
 void handleRapi() {
   String s;
   s = "<html><font size='20'><font color=006666>Open</font><b>EVSE</b></font><p><b>Open Source Hardware</b><p>Send RAPI Command<p>Common Commands:<p>Set Current - $SC XX<p>Set Service Level - $SL 1 - $SL 2 - $SL A<p>Get Real-time Current - $GG<p>Get Temperatures - $GP<p>";
@@ -495,10 +448,10 @@ void web_server_setup()
     return server.requestAuthentication();
   handleSaveMqtt();
   });
-  server.on("/mode", [](){
+  server.on("/divertmode", [](){
   if(www_username!="" && !server.authenticate(www_username.c_str(), www_password.c_str()))
     return server.requestAuthentication();
-  handleMode();
+  handleDivertMode();
   });
   server.on("/saveadmin", [](){
   if(www_username!="" && !server.authenticate(www_username.c_str(), www_password.c_str()))
@@ -516,19 +469,7 @@ void web_server_setup()
     return server.requestAuthentication();
   handleAPOff();
   });
-  /*
-  server.on("/firmware", [](){
-  if(www_username!="" && !server.authenticate(www_username.c_str(), www_password.c_str()))
-    return server.requestAuthentication();
-    handleUpdateCheck();
-  });
 
-  server.on("/update", [](){
-  if(www_username!="" && !server.authenticate(www_username.c_str(), www_password.c_str()))
-    return server.requestAuthentication();
-  handleUpdate();
-  });
-  */
   server.on("/status", [](){
   if(www_username!="" && !server.authenticate(www_username.c_str(), www_password.c_str()))
     return server.requestAuthentication();

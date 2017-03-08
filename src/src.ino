@@ -46,6 +46,7 @@
 #include "input.h"
 #include "emoncms.h"
 #include "mqtt.h"
+#include "divert.h"
 
 unsigned long Timer1; // Timer for events once every 30 seconds
 unsigned long Timer2; // Timer for events once every 1 Minute
@@ -70,7 +71,7 @@ void setup() {
   DEBUG.print("OpenEVSE WiFI ");
   DEBUG.println(ESP.getChipId());
   DEBUG.println("Firmware: "+ currentfirmware);
-  
+
   config_load_settings();
   wifi_setup();
   web_server_setup();
@@ -88,8 +89,8 @@ void loop(){
   web_server_loop();
   wifi_loop();
   if (mqtt_server !=0) mqtt_loop();
-     
-  
+
+
   if (wifi_mode==WIFI_MODE_STA || wifi_mode==WIFI_MODE_AP_AND_STA){
 // -------------------------------------------------------------------
 // Do these things once every 5s
@@ -103,6 +104,7 @@ void loop(){
 // -------------------------------------------------------------------
     if ((millis() - Timer2) >= 60000){
       ohm_loop();
+      if (divertmode!=3) solarpv_divert_update(); //If mode is anyting other than normal charging then calculate and apply updated charge rate
       Timer2 = millis();
     }
 
@@ -117,6 +119,6 @@ void loop(){
     }
   } // end WiFi connected
 
-  
-  
+
+
 } // end loop

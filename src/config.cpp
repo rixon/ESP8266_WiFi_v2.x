@@ -136,6 +136,9 @@ void config_load_settings()
   EEPROM_read_srting(EEPROM_MQTT_TOPIC_START, EEPROM_MQTT_TOPIC_SIZE, mqtt_topic);
   EEPROM_read_srting(EEPROM_MQTT_USER_START, EEPROM_MQTT_USER_SIZE, mqtt_user);
   EEPROM_read_srting(EEPROM_MQTT_PASS_START, EEPROM_MQTT_PASS_SIZE, mqtt_pass);
+  EEPROM_read_srting(EEPROM_MQTT_SOLAR_START, EEPROM_MQTT_SOLAR_SIZE, mqtt_solar);
+  EEPROM_read_srting(EEPROM_MQTT_USE_START, EEPROM_MQTT_USE_SIZE, mqtt_use);
+  EEPROM_read_srting(EEPROM_MQTT_SOLAR_START, EEPROM_MQTT_SOLARTYPE_SIZE, mqtt_solartype);
 
   // Web server credentials
   EEPROM_read_srting(EEPROM_WWW_USER_START, EEPROM_WWW_USER_SIZE, www_username);

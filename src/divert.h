@@ -8,9 +8,14 @@
 #include <Arduino.h>
 
 // global variable
-extern byte mode;
+extern byte divertmode;
+extern int solar;
+extern int use;
 
 // Change mode
-void change_mode(byte mode);
+void change_divertmode(byte divertmode);
+
+// Set charge rate depending on charge mode and solarPV output
+void solarpv_divert_update();
 
 #endif // _EMONESP_DIVERT_H
