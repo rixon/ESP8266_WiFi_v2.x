@@ -15,7 +15,7 @@
 <link rel="stylesheet" type="text/css" href="style.css">
 
 </head>
-    
+
 <body>
 <div id="page">
   <div class="box">
@@ -24,7 +24,7 @@
   </div>
 
 <div id="container">
-    
+
     <input id="tab-1" type="radio" name="tab-group" checked="checked" />
     <label for="tab-1">System</label>
     <input id="tab-2" type="radio" name="tab-group" />
@@ -48,7 +48,7 @@
                     <p><b>OpenEVSE</b></p>
                     <p><b>RAPI packets:</b><br><span id="comm-psuccess"></span> of <span id="comm-psent"></span></p>
                     <button id="apoff" style="display:none">Turn off Access Point</button>
-                    
+
                 </div>
                 <div id="ap-view" style="display:none">
                     <p>Connect to network:</p>
@@ -74,7 +74,7 @@
         <span id=small-text>Web interface HTTP authentication.</span><br><br>
 				<button id="save-admin">Save</button>
 			</div>
-		
+
 		<div class="box380">
 			<h2>WiFi Firmware</h2>
       <span id=small-text>ESP8266</span><br>
@@ -89,7 +89,7 @@
           </div>
     </div>
 	<div id="content-2">
-	  
+
 			<div class="box380">
 			<h2>&nbsp; Energy Monitoring <img src="emoncms.jpg" align=left></h2>
 				<p><b>Emoncms Server*:</b><br>
@@ -99,7 +99,7 @@
 				<a href="http://emoncms.org">emoncms.org</a>,
 				<a href="http://emonpi/emoncms">emonpi/emoncms</a>
 				</span><br>
-				
+
 				<p><b>Emoncms Node*:</b><br>
 				<input id="emoncms_node" type="text">
 				</p><span id=small-text>emoncms.org only supports numberical nodeID's (1-32)</span>
@@ -111,12 +111,12 @@
         <span id=small-text>
     			7D:82:15:BE:D7:BC:72:58:87:7D:8E:40:D4:80:BA:1A:9F:8B:8D:DA
   			</span><br>
-      	
+
 				<button id="save-emoncms">Save</button>
 				<b>&nbsp; Connected:&nbsp;<span id="emoncms_connected"></span></b><br><br>
 				<span id="psuccess"></span>
   </div>
-        
+
       <div class="box380">
       		<h2>Solar PV Divert</h2>
           <p>Dynamically adjust charge rate based on solar PV generation.</p>
@@ -127,8 +127,8 @@
       		<button id="mode3">3:Normal (default)</button>
       		<span id=small-text>Mode can be controlled via MQTT topic: {base-topic}/mode e.g: '1':Eco, '2':Eco+, '3':Normal</span><br>
     		</div>
-      
-        
+
+
     		<div class="box380">
     		<h2>MQTT</h2>
               <p>Status published to:
@@ -160,13 +160,17 @@
           	  <span id=small-text>Required for solar PV divert, always positive.</span><br>
               <p><b>Onsite-consumption topic:</b><br>
           		<input id="mqtt_use" type="text" value="emon/emonpi/power1"><br>
-          	  <span id=small-text>Required for Solar PV divert Eco+ mode, always positive.</span>
-          	  <p><span id="small-text"><a href="https://guide.openenergymonitor.org/applications/solar-pv/">Pre populated with emonPi solar PV defaults.</a></span></p>
+              <span id=small-text>Or grid import / export if Type 2. Required for Solar PV divert Eco+ mode</span>
+              <p><b>Solar PV Type (1 or 2):</b><br>
+              <input id="mqtt_solartype" type="text" value="1"><br><br>
+              <span id=small-text><b>Type1:</b> Solar PV and consumption can be monitored separately. Both readings are always positive</span><br><br>
+              <span id=small-text><b>Type2</b>: Consumption cannot be monitored separately, instead must be calculated by subtracting solar PV gen from grid import/export. Grid export should be positibe when importing. <a href="https://guide.openenergymonitor.org/applications/solar-pv/">See OpenEnergyMonitor SolarPV guide</a></span>
+          	  <p><span id="small-text"><i>Fields are pre-populated with emonPi solar PV defaults.</i></span></p>
           	  <br>
               <button id="save-mqtt">Save</button>
               <b>&nbsp; Connected:&nbsp;<span id="mqtt_connected"></span></b>
     		</div>
-		
+
         <div class="box380">
 					<h2>&nbsp; OhmConnect <img src="ohm.jpg" align=left></h2>
     	        <p>OhmConnect monitors real-time conditions on the electricity grid. When dirty and unsustainable power plants turn on, our users receive a notification to save energy.</p>
@@ -179,7 +183,7 @@
     				<b>Key: </b>OpnEoVse
 	     </div>
 	</div>
-	
+
        <div id="content-3">
 
   			<div class="box380">
@@ -312,9 +316,9 @@
 			</div>
         </div>
 	</div>
-      
-   
-    
+
+
+
   <div id="footer">
       <br><b> Powered by <a href="http://www.openevse.com">OpenEVSE</a> and <a href="https://openenergymonitor.org">OpenEnergyMonitor</a></b>
 	  <br> by Chris Howell, Trystan Lea, Glyn Hudson

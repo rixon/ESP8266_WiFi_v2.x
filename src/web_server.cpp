@@ -192,12 +192,15 @@ void handleSaveMqtt() {
   config_save_mqtt(server.arg("server"),
                    server.arg("topic"),
                    server.arg("user"),
-                   server.arg("pass"));
+                   server.arg("pass"),
+                   server.arg("solar"),
+                   server.arg("use"),
+                   server.arg("solartype"));
 
   char tmpStr[200];
   // BUG: Potential buffer overflow issue the values mqtt_xxx come from user
   //      input so could overflow the buffer no matter the length
-  sprintf(tmpStr,"Saved: %s %s %s %s",mqtt_server.c_str(),mqtt_topic.c_str(),mqtt_user.c_str(),mqtt_pass.c_str());
+  sprintf(tmpStr,"Saved: %s %s %s %s %s %s %s",mqtt_server.c_str(),mqtt_topic.c_str(),mqtt_user.c_str(),mqtt_pass.c_str(),mqtt_solar.c_str(),mqtt_use.c_str(),mqtt_solartype.c_str());
   DEBUG.println(tmpStr);
   server.send(200, "text/html", tmpStr);
 
@@ -273,6 +276,9 @@ void handleStatus() {
   s += "\"mqtt_server\":\""+mqtt_server+"\",";
   s += "\"mqtt_topic\":\""+mqtt_topic+"\",";
   s += "\"mqtt_user\":\""+mqtt_user+"\",";
+  s += "\"mqtt_solar\":\""+mqtt_solar+"\",";
+  s += "\"mqtt_use\":\""+mqtt_use+"\",";
+  s += "\"mqtt_solartype\":\""+mqtt_solartype+"\",";
   //s += "\"mqtt_pass\":\""+mqtt_pass+"\","; security risk: DONT RETURN PASSWORDS
   s += "\"mqtt_connected\":\""+String(mqtt_connected())+"\",";
 
@@ -325,9 +331,9 @@ void handleConfig() {
 // Returns Updates JSON
 // url: /rapiupdate
 // -------------------------------------------------------------------
-  
+
  void handleUpdate() {
-    
+
   String s = "{";
   s += "\"ohmhour\":\""+ohm_hour+"\",";
   s += "\"espvcc\":\""+String(espvcc)+"\",";
@@ -568,9 +574,9 @@ void web_server_setup()
     return server.requestAuthentication();
   handleSaveOhmkey();
   });
-  
 
-  
+
+
 
   server.onNotFound([](){
   if(!handleFileRead(server.uri()))
