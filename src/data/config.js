@@ -11,7 +11,7 @@ r1.onreadystatechange = function () {
   var status = JSON.parse(r1.responseText);
 
   document.getElementById("passkey").value = status.pass;
-  
+
   if ((status.www_user!=0) && (status.www_user!="undefined")  ){
     document.getElementById("www_user").value = status.www_username;
   }
@@ -21,7 +21,7 @@ r1.onreadystatechange = function () {
     document.getElementById("emoncms_node").value = status.emoncms_node;
     document.getElementById("emoncms_fingerprint").value = status.emoncms_fingerprint;
   }
-  
+
 
   if (status.emoncms_connected == "1"){
    document.getElementById("emoncms_connected").innerHTML = "Yes";
@@ -42,7 +42,7 @@ r1.onreadystatechange = function () {
       document.getElementById("mqtt_user").value = status.mqtt_user;
     }
   }
-  
+
   if (status.mqtt_connected == "1"){
    document.getElementById("mqtt_connected").innerHTML = "Yes";
   } else {
@@ -77,7 +77,7 @@ r1.onreadystatechange = function () {
       document.getElementById("sta-ip").innerHTML = "<a href='http://"+status.ipaddress+"'>"+status.ipaddress+"</a>";
       document.getElementById("ap-view").style.display = 'none';
       document.getElementById("client-view").style.display = '';
-	  
+
       ipaddress = status.ipaddress;
 
 
@@ -89,7 +89,7 @@ var r2 = new XMLHttpRequest();
 r2.open("GET", "config", true);
 r2.timeout = 2000;
 r2.onreadystatechange = function () {
-  
+
   if (r2.readyState != 4 || r2.status != 200) return;
   var config = JSON.parse(r2.responseText);
   document.getElementById("firmware").innerHTML = config.firmware;
@@ -144,7 +144,7 @@ r2.onreadystatechange = function () {
 	document.getElementById("timelimit").innerHTML = config.timelimit;
 };
 r2.send();
-  
+
 var r3 = new XMLHttpRequest();
     r3.open("GET", "rapiupdate", true);
 	r3.timeout = 8000;
@@ -165,7 +165,7 @@ var r3 = new XMLHttpRequest();
 	  document.getElementById("temp1").innerHTML = update.temp1;
 	  document.getElementById("temp2").innerHTML = update.temp2;
 	  document.getElementById("temp3").innerHTML = update.temp3;
-	
+
 	};
 	r3.send();
 
@@ -177,7 +177,7 @@ setInterval(update,10000);
 // Periodic 10s update of last data values
 // -----------------------------------------------------------------------
 function update() {
-	
+
 	var r3 = new XMLHttpRequest();
     r3.open("GET", "rapiupdate", true);
 	r3.timeout = 8000;
@@ -230,7 +230,7 @@ function update() {
       }
     };
     r2.send();
-    
+
 }
 function updateStatus() {
   // Update status on Wifi connection
@@ -360,7 +360,10 @@ document.getElementById("mode1").addEventListener("click", function(e) {
     // Eco
     mode = 1;
     changemode(mode);
-    document.getElementById("mode1").style.backgroundColor = 'black';
+    document.getElementById("mode1").style.color = '#000000';
+    document.getElementById("mode2").style.color = 'white';
+    document.getElementById("mode3").style.color = 'white';
+    document.getElementById("mode1").style.backgroundColor = '#f1f1f1';
     document.getElementById("mode2").style.backgroundColor = '#008080';
     document.getElementById("mode3").style.backgroundColor = '#008080';
 });
@@ -369,7 +372,11 @@ document.getElementById("mode2").addEventListener("click", function(e) {
     // Eco+
     mode = 2;
     changemode(mode);
-    document.getElementById("mode2").style.backgroundColor = 'black';
+    document.getElementById("mode1").style.color = 'white';
+    document.getElementById("mode2").style.color = '#000000';
+    document.getElementById("mode3").style.color = 'white';
+
+    document.getElementById("mode2").style.backgroundColor = '#f1f1f1';
     document.getElementById("mode1").style.backgroundColor = '#008080';
     document.getElementById("mode3").style.backgroundColor = '#008080';
 });
@@ -378,7 +385,10 @@ document.getElementById("mode3").addEventListener("click", function(e) {
     // normal charge
     mode = 3;
     changemode(mode);
-    document.getElementById("mode3").style.backgroundColor = 'black';
+    document.getElementById("mode1").style.color = 'white';
+    document.getElementById("mode2").style.color = 'white';
+    document.getElementById("mode3").style.color = '#000000';
+    document.getElementById("mode3").style.backgroundColor = '#f1f1f1';
     document.getElementById("mode1").style.backgroundColor = '#008080';
     document.getElementById("mode2").style.backgroundColor = '#008080';
 });
