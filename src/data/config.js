@@ -36,8 +36,9 @@ r1.onreadystatechange = function () {
   if (status.mqtt_server!==0){
     document.getElementById("mqtt_server").value = status.mqtt_server;
     document.getElementById("mqtt_topic").value = status.mqtt_topic;
-    document.getElementById("mqtt_solar").value = solar.mqtt_topic;
-    document.getElementById("mqtt_use").value = use.mqtt_topic;
+    document.getElementById("mqtt_solar").value = status.mqtt_solar;
+    document.getElementById("mqtt_use").value = status.use;
+    document.getElementById("mqtt_solartype").value = status.mqtt_solartype;
 
     if (status.mqtt_user!==0){
       document.getElementById("mqtt_user").value = status.mqtt_user;
