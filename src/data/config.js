@@ -37,7 +37,7 @@ r1.onreadystatechange = function () {
     document.getElementById("mqtt_server").value = status.mqtt_server;
     document.getElementById("mqtt_topic").value = status.mqtt_topic;
     document.getElementById("mqtt_solar").value = status.mqtt_solar;
-    document.getElementById("mqtt_use").value = status.use;
+    document.getElementById("mqtt_use").value = status.mqtt_use;
     document.getElementById("mqtt_solartype").value = status.mqtt_solartype;
 
     if (status.mqtt_user!==0){
@@ -55,12 +55,13 @@ r1.onreadystatechange = function () {
   document.getElementById("version").innerHTML = status.version;
   document.getElementById("ohmkey").value = status.ohmkey;
 
-  // Set Solar PV divert mode button to current mode status
-  if (mqtt.solar===0) {
+  // If MQTT solar pv feed is not set then disable solar PV divert
+  if (mqtt_solar===0) {
     divertmode=0;
     set_mode_button(divertmode); // disable mode button if solar PV feeds are not configured
   }
   else{
+    // Set Solar PV divert mode button to current mode status
     divertmode = status.divertmode;
     set_mode_button(divertmode);
   }
@@ -211,6 +212,7 @@ function update() {
 	  document.getElementById("temp3").innerHTML = update.temp3;
   };
   r3.send();
+  
 	var r2 = new XMLHttpRequest();
   r2.open("GET", "status", false);
   r2.onreadystatechange = function () {
@@ -241,7 +243,7 @@ function update() {
       document.getElementById("sta-ssid").innerHTML = out;
       }
   };
-    r2.send();
+  r2.send();
 }
 
 function updateStatus() {
