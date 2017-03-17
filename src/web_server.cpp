@@ -445,6 +445,24 @@ void handleRapiR() {
    server.send(200, "text/html", s);
 }
 
+void handleRapiPlain() {
+  String s;
+  String rapiString;
+  String rapi = server.arg("rapi");
+  rapi.replace("%24", "$");
+  rapi.replace("+", " ");
+  Serial.flush();
+  Serial.println(rapi);
+  delay(commDelay);
+       while(Serial.available()) {
+         rapiString = Serial.readStringUntil('\r');
+       }
+   s = rapiString;
+   server.send(200, "text/plain", s);
+}
+
+
+
 
 void web_server_setup()
 {
@@ -541,6 +559,14 @@ void web_server_setup()
       return server.requestAuthentication();
     handleRapiR();
   });
+
+  server.on("/rp", [](){
+    if(www_username!="" && !server.authenticate(www_username.c_str(), www_password.c_str()))
+      return server.requestAuthentication();
+    handleRapiPlain();
+  });
+
+
 
   server.on("/config", [](){
   if(www_username!="" && !server.authenticate(www_username.c_str(), www_password.c_str()))
